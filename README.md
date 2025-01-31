@@ -2,7 +2,7 @@
 
 Sistema completo para gestão de reservas de salas de reunião com integração AD, calendário interativo e controle de permissões.
 
-![Screenshot do Sistema](screenshot.png)
+![Screenshot do Sistema](![image](https://github.com/user-attachments/assets/faef39b0-9130-42a5-b64e-feb26d6be32e))
 
 ## ⚙️ Funcionalidades Principais
 
