@@ -1,4 +1,4 @@
-# Sistema de Reservas de Salas - PROELT
+# Sistema de Reservas de Salas 
 
 Sistema completo para gestão de reservas de salas de reunião com integração AD, calendário interativo e controle de permissões.
 
