@@ -8,8 +8,6 @@ Sistema completo para gestão de reservas de salas de reunião com integração 
 
 ![image](https://github.com/user-attachments/assets/ecfa963f-f171-47f8-8b4f-a9b275fdac9d)
 
-
-
 ## ⚙️ Funcionalidades Principais
 
 - Autenticação via LDAP ou usuário local
