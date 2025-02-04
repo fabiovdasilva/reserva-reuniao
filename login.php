@@ -1,9 +1,7 @@
 <?php
 include 'includes/db.php';
 include 'includes/auth.php';
-
 $erro = '';
-
 if($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Verificar se é o admin local
     if($_POST['username'] === 'admin' && $_POST['password'] === '85652545') {
@@ -13,11 +11,9 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: index.php");
         exit();
     }
-
     $ldap_con = ldap_connect("192.168.2.2");
     ldap_set_option($ldap_con, LDAP_OPT_PROTOCOL_VERSION, 3);
     ldap_set_option($ldap_con, LDAP_OPT_REFERRALS, 0);
-    
     if(@ldap_bind($ldap_con, "admin2@proelt.com.br", "Zug2022.")) {
         $filter = "(sAMAccountName=" . $_POST['username'] . ")";
         $result = ldap_search(
@@ -26,14 +22,11 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
             $filter,
             ["company", "memberof"]
         );
-        
         $info = ldap_get_entries($ldap_con, $result);
-        
         if($info['count'] > 0) {
             $_SESSION['usuario'] = $_POST['username'];
             $_SESSION['empresa'] = $info[0]['company'][0] ?? 'Não informado';
             $_SESSION['is_admin'] = false;
-            
             if(isset($info[0]['memberof'])) {
                 foreach($info[0]['memberof'] as $group) {
                     if(strpos($group, 'Administradores') !== false) {
@@ -42,7 +35,6 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
                 }
             }
-            
             header("Location: index.php");
             exit();
         }
@@ -50,7 +42,6 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
     $erro = "Credenciais inválidas!";
 }
 ?>
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -71,7 +62,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <button type="submit" class="btn btn-primary">Entrar</button>
             <?php if($erro): ?>
-            <p class="error"><?= $erro ?></p>
+                <p class="error"><?= $erro ?></p>
             <?php endif; ?>
         </form>
     </div>

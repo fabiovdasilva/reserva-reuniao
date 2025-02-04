@@ -1,20 +1,31 @@
 :root {
     --primary: rgb(32,51,86);
     --secondary: #d94621;
-    --primary-light: rgba(32,51,86,0.1);
-    --text-light: #ffffff;
     --background: #f8f9fa;
     --error: #dc3545;
 }
 
+/* Reset básico */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+a {
+    color: black
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+
+
+
 body {
     font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--background) !important;
     height: 100vh;
     display: flex;
     flex-direction: column;
@@ -22,232 +33,264 @@ body {
 
 /* Header */
 .header {
-    background: var(--primary);
-    color: var(--text-light);
-    padding: 0 2rem;
-    height: 70px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    position: fixed;
+    background: var(--primary) !important;
+    color: #fff !important;
+    padding: 0 2rem !important;
+    height: 70px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important;
+    position: fixed !important;
     top: 0;
     width: 100%;
     z-index: 1000;
+    transition: background 0.3s ease !important;
 }
-
+.header:hover {
+    background: #1f3a66 !important;
+}
 .logo {
-    font-size: 1.8rem;
-    font-weight: 700;
-    letter-spacing: 1px;
+    font-size: 1.8rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 1px !important;
 }
-
 .user-info {
-    display: flex;
-    gap: 20px;
-    align-items: center;
-    flex-wrap: wrap;
+    display: flex !important;
+    gap: 20px !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
 }
-
 .user-info span {
-    background: rgba(255,255,255,0.15);
-    padding: 5px 12px;
-    border-radius: 20px;
-    font-size: 0.9rem;
+    background: rgba(255,255,255,0.15) !important;
+    padding: 5px 12px !important;
+    border-radius: 20px !important;
+    font-size: 0.9rem !important;
 }
 
-/* Sidebar */
+/* Sidebar (menu de salas) */
 .sidebar {
-    width: 250px;
-    background: white;
-    position: fixed;
+    width: 250px !important;
+    background: #fff !important;
+    position: fixed !important;
     left: 0;
     top: 70px;
     bottom: 0;
-    padding: 20px;
-    overflow-y: auto;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    padding: 20px !important;
+    overflow-y: auto !important;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1) !important;
 }
-
 .sala-item {
-    padding: 10px;
-    margin: 5px 0;
-    cursor: pointer;
-    border-radius: 5px;
-    transition: all 0.3s;
-    background: var(--primary-light);
-    border: 1px solid var(--primary);
-    color: var(--primary);
+    padding: 10px !important;
+    margin: 5px 0 !important;
+    cursor: pointer !important;
+    border-radius: 5px !important;
+    transition: all 0.3s ease !important;
+    background: rgba(32,51,86,0.1) !important;
+    border: 1px solid var(--primary) !important;
+    color: var(--primary) !important;
 }
-
 .sala-item:hover {
-    background: var(--primary);
-    color: white;
+    background: var(--primary) !important;
+    color: #fff !important;
 }
-
 .sala-item.selecionada {
     background: var(--primary) !important;
-    color: white !important;
-    font-weight: bold;
+    color: #fff !important;
+    font-weight: bold !important;
 }
-
 .sala-item.indisponivel {
-    opacity: 0.5;
-    pointer-events: none;
-    text-decoration: line-through;
+    opacity: 0.5 !important;
+    pointer-events: none !important;
+    text-decoration: line-through !important;
 }
 
-/* Main Content */
+/* Main Content e Calendário */
 .main-content {
-    margin-left: 250px;
-    margin-top: 70px;
-    padding: 20px;
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    background: var(--background);
+    margin-left: 250px !important;
+    margin-top: 70px !important;
+    display: flex !important;
+    flex: 1 !important;
+    position: relative !important;
 }
-
-/* Calendário */
-#calendar {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 15px rgba(0,0,0,0.08);
-}
-
 .calendar-container {
-    max-width: 1200px;
-    width: 100%;
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+    flex: 1 !important;
+    padding: 20px !important;
+    transition: margin-right 0.4s ease !important;
+}
+#calendar {
+    background: #fff !important;
+    padding: 20px !important;
+    border-radius: 10px !important;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.08) !important;
+    transition: transform 0.3s ease !important;
 }
 
-/* Modais */
-.modal {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: white;
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.2);
-    z-index: 1000;
-    width: 90%;
-    max-width: 400px;
+/* Painel Direito (reservas do dia) */
+.right-panel {
+    position: fixed !important;
+    top: 70px;
+    right: 0;
+    bottom: 0;
+    width: 320px !important;
+    background: #fff !important; /* Fundo sólido */
+    color: #000 !important; /* Texto em preto */
+    box-shadow: -2px 0 10px rgba(0,0,0,0.1) !important;
+    transform: translateX(100%) !important;
+    transition: transform 0.4s ease !important;
+    overflow-y: auto !important;
+    padding: 20px !important;
+    z-index: 100;
 }
+.right-panel.active {
+    transform: translateX(0) !important;
+}
+
+/* Cards de reserva (estilo Google Calendar) */
+.card-reserva {
+    background: #f0f0f0 !important;
+    border-left: 4px solid var(--secondary) !important;
+    padding: 10px !important;
+    margin-bottom: 10px !important;
+    border-radius: 4px !important;
+    transition: transform 0.3s ease !important;
+    color: #000 !important;
+}
+.card-reserva:hover {
+    transform: scale(1.02) !important;
+}
+
+/* Spinner */
+.spinner {
+    border: 4px solid #f3f3f3 !important;
+    border-top: 4px solid var(--secondary) !important;
+    border-radius: 50% !important;
+    width: 30px !important;
+    height: 30px !important;
+    animation: spin 1s linear infinite !important;
+    margin: 20px auto !important;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Modais e Diálogos */
+.modal {
+    display: none !important;
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) scale(0.9) !important;
+    background: #fff !important;
+    padding: 2rem !important;
+    border-radius: 12px !important;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.2) !important;
+    z-index: 2000 !important;
+    width: 90% !important;
+    max-width: 400px !important;
+    opacity: 0 !important;
+    transition: all 0.3s ease !important;
+    
+}
+
 
 .modal.active {
-    display: block;
+    display: block !important;
+    opacity: 1 !important;
+    transform: translate(-50%, -50%) scale(1) !important;
+    height: auto;
+    
 }
-
 .modal h3 {
-    margin: 0 0 1.5rem 0;
-    color: var(--primary);
-    font-size: 1.4rem;
-    border-bottom: 2px solid var(--primary);
-    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem !important;
+    color: var(--primary) !important;
+    font-size: 1.4rem !important;
+    border-bottom: 2px solid var(--primary) !important;
+    padding-bottom: 0.5rem !important;
 }
-
 .form-group {
-    margin-bottom: 1.2rem;
+    margin-bottom: 1.2rem !important;
 }
-
 .form-group label {
-    display: block;
-    margin-bottom: 0.3rem;
-    color: var(--primary);
-    font-weight: 500;
+    display: block !important;
+    margin-bottom: 0.3rem !important;
+    color: var(--primary) !important;
+    font-weight: 500 !important;
 }
-
 input, select {
-    width: 100%;
-    padding: 0.7rem;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-size: 1rem;
-    transition: border-color 0.3s;
+    width: 100% !important;
+    padding: 0.7rem !important;
+    border: 1px solid #ddd !important;
+    border-radius: 6px !important;
+    font-size: 1rem !important;
+    transition: border-color 0.3s !important;
 }
-
 input:focus, select:focus {
-    border-color: var(--primary);
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(32,51,86,0.1);
+    border-color: var(--primary) !important;
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(32,51,86,0.1) !important;
 }
 
 /* Botões */
+.form-botoes {
+
+    flex-direction: row;
+    display: flex;
+}
+
+
 .btn {
-    padding: 0.6rem 1.2rem;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-size: 0.9rem;
+    padding: 0.6rem 1.2rem !important;
+    border: none !important;
+    border-radius: 6px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    font-weight: 500 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    font-size: 0.9rem !important;
 }
-
 .btn-primary {
-    background: var(--secondary);
-    color: white;
+    background: var(--secondary) !important;
+    color: #fff !important;
 }
-
 .btn-primary:hover {
-    background: #c23816;
-    transform: translateY(-1px);
+    background: #c23816 !important;
+    transform: translateY(-1px) !important;
 }
-
 .btn-secondary {
-    background: #666;
-    color: white;
+    background: #666 !important;
+    color: #fff !important;
 }
-
 .btn-secondary:hover {
-    background: #555;
+    background: #555 !important;
 }
-
 .btn-danger {
-    background: #dc3545;
-    color: white;
+    background: var(--error) !important;
+    color: #fff !important;
 }
 
-/* Mobile */
+/* Ajustes para Mobile */
 @media (max-width: 768px) {
-    body {
-        padding: 10px;
-    }
-    
     .header {
-        flex-direction: column;
-        gap: 15px;
-        padding: 1rem;
+        flex-direction: column !important;
+        gap: 15px !important;
+        padding: 1rem !important;
     }
-    
-    .user-info {
-        gap: 10px;
-        justify-content: center;
-    }
-    
     .user-info span {
-        font-size: 0.8rem;
+        font-size: 0.8rem !important;
     }
-    
     #calendar {
-        padding: 10px;
+        padding: 10px !important;
     }
-    
-    .fc-toolbar {
-        flex-direction: column;
-        gap: 10px;
-    }
-    
     .modal {
-        width: 95%;
-        padding: 1.5rem;
+        width: 95% !important;
+        padding: 1.5rem !important;
+        height: auto;
+    }
+    .btn {
+        font-size: 1.1rem !important;
+        padding: 0.8rem 1.4rem !important;
     }
 }
