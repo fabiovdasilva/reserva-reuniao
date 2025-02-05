@@ -36,7 +36,8 @@ try {
     <div class="header">
         <div class="logo">PROELT</div>
         <div class="user-info">
-            <span><?= htmlspecialchars(usuarioAtual()) ?></span>
+            <!-- Exibe o nome para exibição do AD se estiver definido, senão exibe o nome de usuário -->
+            <span><?= htmlspecialchars($_SESSION['nome_exibicao'] ?? usuarioAtual()) ?></span>
             <span><?= htmlspecialchars(empresaAtual()) ?></span>
             <button class="btn btn-primary" onclick="window.showReservaModal()">Nova Reserva</button>
             <?php if(isAdmin()): ?>
@@ -125,6 +126,7 @@ try {
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // A variável USUARIO_ATUAL continua sendo o nome de usuário para fins de comparação em reservas, etc.
         const USUARIO_ATUAL = '<?= htmlspecialchars(usuarioAtual()) ?>';
         const IS_ADMIN = <?= isAdmin() ? 'true' : 'false' ?>;
     </script>

@@ -8,8 +8,9 @@ try {
         case 'GET':
             if(isset($_GET['dia']) && !isset($_GET['sala'])) {
                 $dia = $_GET['dia'];
+                // Seleciona o nome para exibição (campo nome_exibicao) para que apareça nas reservas
                 $stmt = $pdo->prepare("
-                    SELECT id, titulo as title, inicio as start, fim as end, cor, usuario, empresa, sala
+                    SELECT id, titulo as title, inicio as start, fim as end, cor, nome_exibicao as usuario, empresa, sala
                     FROM reservas
                     WHERE DATE(inicio) = ?
                 ");
@@ -23,7 +24,7 @@ try {
             if(isset($_GET['dia'])) {
                 $dia = $_GET['dia'];
                 $stmt = $pdo->prepare("
-                    SELECT id, titulo as title, inicio as start, fim as end, cor, usuario, empresa, sala
+                    SELECT id, titulo as title, inicio as start, fim as end, cor, nome_exibicao as usuario, empresa, sala
                     FROM reservas
                     WHERE sala = ? AND DATE(inicio) = ?
                 ");
@@ -32,7 +33,7 @@ try {
                 echo json_encode($reservas);
             } else {
                 $stmt = $pdo->prepare("
-                    SELECT id, titulo as title, inicio as start, fim as end, cor, usuario, empresa, sala
+                    SELECT id, titulo as title, inicio as start, fim as end, cor, nome_exibicao as usuario, empresa, sala
                     FROM reservas
                     WHERE sala = ?
                 ");
@@ -79,39 +80,40 @@ try {
             $stmt = $pdo->prepare("SELECT cor FROM empresas WHERE nome = ?");
             $stmt->execute([empresaAtual()]);
             $cor = $stmt->fetchColumn();
+            // Inserção atualizada: armazena o sAMAccountName em 'usuario' e o displayName em 'nome_exibicao'
             $stmt = $pdo->prepare("
                 INSERT INTO reservas
-                (titulo, sala, inicio, fim, usuario, empresa, cor)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                (titulo, sala, inicio, fim, usuario, nome_exibicao, empresa, cor)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             ");
             $stmt->execute([
                 $dados['titulo'],
                 $dados['sala'],
                 $dados['inicio'],
                 $dados['fim'],
-                usuarioAtual(),
+                usuarioAtual(), // valor interno (sAMAccountName)
+                $_SESSION['nome_exibicao'] ?? usuarioAtual(), // valor para exibição
                 empresaAtual(),
                 $cor
             ]);
             echo json_encode(['success' => true]);
             break;
-        // ...
-            case 'DELETE':
-        $id = $_GET['id'] ?? null;
-        if(!$id) throw new Exception("ID não especificado");
-        $stmt = $pdo->prepare("SELECT usuario FROM reservas WHERE id = ?");
-        $stmt->execute([$id]);
-        $reserva = $stmt->fetch();
-        if(!$reserva) throw new Exception("Reserva não encontrada");
-        // Comparação case-insensitive para verificar se o usuário atual é o dono da reserva
-        if(strtolower(trim(usuarioAtual())) !== strtolower(trim($reserva['usuario'])) && !isAdmin()){
-         throw new Exception("Acesso não autorizado");
-    }
-        $stmt = $pdo->prepare("DELETE FROM reservas WHERE id = ?");
-        $stmt->execute([$id]);
-        echo json_encode(['success' => true]);
-    break;
-
+        case 'DELETE':
+            $id = $_GET['id'] ?? null;
+            if(!$id) throw new Exception("ID não especificado");
+            // Busca o sAMAccountName para comparação (campo 'usuario')
+            $stmt = $pdo->prepare("SELECT usuario FROM reservas WHERE id = ?");
+            $stmt->execute([$id]);
+            $reserva = $stmt->fetch();
+            if(!$reserva) throw new Exception("Reserva não encontrada");
+            // Comparação case-insensitive para verificar se o usuário atual é o dono da reserva
+            if(strtolower(trim(usuarioAtual())) !== strtolower(trim($reserva['usuario'])) && !isAdmin()){
+                throw new Exception("Acesso não autorizado");
+            }
+            $stmt = $pdo->prepare("DELETE FROM reservas WHERE id = ?");
+            $stmt->execute([$id]);
+            echo json_encode(['success' => true]);
+            break;
         default:
             http_response_code(405);
             echo json_encode(['error' => 'Método não permitido']);

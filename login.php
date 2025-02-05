@@ -6,6 +6,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Verificar se é o admin local
     if($_POST['username'] === 'admin' && $_POST['password'] === '85652545') {
         $_SESSION['usuario'] = 'admin';
+        $_SESSION['nome_exibicao'] = 'admin';
         $_SESSION['empresa'] = 'Administração';
         $_SESSION['is_admin'] = true;
         header("Location: index.php");
@@ -15,16 +16,21 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
     ldap_set_option($ldap_con, LDAP_OPT_PROTOCOL_VERSION, 3);
     ldap_set_option($ldap_con, LDAP_OPT_REFERRALS, 0);
     if(@ldap_bind($ldap_con, "admin2@proelt.com.br", "Zug2022.")) {
+        // Inclua o atributo "displayName" na lista de atributos desejados
         $filter = "(sAMAccountName=" . $_POST['username'] . ")";
+        $attributes = ["company", "memberof", "displayName"];
         $result = ldap_search(
             $ldap_con,
             "OU=Proelt Engenharia Ltda - Usuarios, DC=proelt,DC=com,DC=br",
             $filter,
-            ["company", "memberof"]
+            $attributes
         );
         $info = ldap_get_entries($ldap_con, $result);
         if($info['count'] > 0) {
+            // Armazena o nome de usuário para autenticação
             $_SESSION['usuario'] = $_POST['username'];
+            // Armazena o nome para exibição a partir do AD; se não existir, usa o usuário
+            $_SESSION['nome_exibicao'] = $info[0]['displayname'][0] ?? $_POST['username'];
             $_SESSION['empresa'] = $info[0]['company'][0] ?? 'Não informado';
             $_SESSION['is_admin'] = false;
             if(isset($info[0]['memberof'])) {
