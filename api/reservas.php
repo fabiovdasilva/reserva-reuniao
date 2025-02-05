@@ -95,20 +95,23 @@ try {
             ]);
             echo json_encode(['success' => true]);
             break;
-        case 'DELETE':
-            $id = $_GET['id'] ?? null;
-            if(!$id) throw new Exception("ID não especificado");
-            $stmt = $pdo->prepare("SELECT usuario FROM reservas WHERE id = ?");
-            $stmt->execute([$id]);
-            $reserva = $stmt->fetch();
-            if(!$reserva) throw new Exception("Reserva não encontrada");
-            if(usuarioAtual() !== $reserva['usuario'] && !isAdmin()) {
-                throw new Exception("Acesso não autorizado");
-            }
-            $stmt = $pdo->prepare("DELETE FROM reservas WHERE id = ?");
-            $stmt->execute([$id]);
-            echo json_encode(['success' => true]);
-            break;
+        // ...
+            case 'DELETE':
+        $id = $_GET['id'] ?? null;
+        if(!$id) throw new Exception("ID não especificado");
+        $stmt = $pdo->prepare("SELECT usuario FROM reservas WHERE id = ?");
+        $stmt->execute([$id]);
+        $reserva = $stmt->fetch();
+        if(!$reserva) throw new Exception("Reserva não encontrada");
+        // Comparação case-insensitive para verificar se o usuário atual é o dono da reserva
+        if(strtolower(trim(usuarioAtual())) !== strtolower(trim($reserva['usuario'])) && !isAdmin()){
+         throw new Exception("Acesso não autorizado");
+    }
+        $stmt = $pdo->prepare("DELETE FROM reservas WHERE id = ?");
+        $stmt->execute([$id]);
+        echo json_encode(['success' => true]);
+    break;
+
         default:
             http_response_code(405);
             echo json_encode(['error' => 'Método não permitido']);
