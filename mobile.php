@@ -53,17 +53,27 @@ $salas = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <div id="agendaView" class="view active">
       <div class="date-picker">
         <button id="prevDay"><i class="material-icons">chevron_left</i></button>
-        <div id="selectedDate">Hoje</div>
+        <span id="selectedDate">Hoje</span>
         <button id="nextDay"><i class="material-icons">chevron_right</i></button>
+      </div>
+      <!-- Exibe a sala em um container separado com estilo diferenciado -->
+      <div class="room-display">
+         <span id="selectedRoom">Sala 01</span>
       </div>
       <div id="eventList" class="event-list">
         <!-- Eventos do dia carregados via JS -->
       </div>
     </div>
+    
     <!-- Calendário Mensal View -->
     <div id="calendarView" class="view">
-      <div id="monthlyCalendar" class="monthly-calendar">
-        <!-- Calendário gerado via JS -->
+      <!-- Container rolável para evitar que o resumo fique oculto -->
+      <div class="calendar-container">
+         <div id="monthlyCalendar" class="monthly-calendar">
+           <!-- Calendário gerado via JS -->
+         </div>
+         <!-- Resumo do dia com reservas de todas as salas -->
+         <div id="daySummary" class="day-summary"></div>
       </div>
     </div>
   </main>
@@ -114,15 +124,19 @@ $salas = $stmt->fetchAll(PDO::FETCH_ASSOC);
   <!-- Modal para Detalhes da Reserva -->
   <div id="eventModal" class="modal">
     <div class="modal-content">
-      <h3>Detalhes da Reserva</h3>
       <div id="eventDetails"></div>
-      <div class="form-buttons">
-        <button id="cancelReservationBtn" class="btn btn-danger" onclick="cancelReservation()">Cancelar Reserva</button>
-        <button type="button" class="btn btn-secondary" onclick="closeEventModal()">Fechar</button>
-      </div>
     </div>
   </div>
   
+  <!-- Modal de Notificação (para avisos, ex: reserva efetuada) -->
+  <div id="notificationModal" class="modal notification-modal">
+    <div class="modal-content">
+      <p id="notificationMessage"></p>
+    </div>
+  </div>
+  
+  <!-- Define o usuário atual para uso no JS -->
+  <script>const currentUser = '<?= usuarioAtual() ?>';</script>
   <script src="js/mobile.js"></script>
 </body>
 </html>

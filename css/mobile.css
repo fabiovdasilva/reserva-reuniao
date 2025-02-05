@@ -1,258 +1,303 @@
 :root {
-    --primary: rgb(32,51,86);
-    --secondary: #d94621;
-    --background: #f8f9fa;
-    --text-color: #333;
-    --white: #fff;
-    --error: #dc3545;
-  }
-  
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  body {
-    font-family: 'Segoe UI', sans-serif;
-    background: var(--background);
-    color: var(--text-color);
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    overflow: hidden;
-  }
-  
-  /* Menu Lateral */
-  .side-menu {
-    position: fixed;
-    top: 0;
-    left: -250px;
-    width: 250px;
-    height: 100%;
-    background: var(--white);
-    box-shadow: 2px 0 5px rgba(0,0,0,0.2);
-    transition: left 0.3s;
-    z-index: 1001;
-  }
-  .side-menu.active {
-    left: 0;
-  }
-  .side-menu-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: var(--primary);
-    color: var(--white);
-    padding: 16px;
-  }
-  .side-menu ul {
-    list-style: none;
-    padding: 0;
-  }
-  .side-menu ul li {
-    padding: 12px 16px;
-    border-bottom: 1px solid #ddd;
-    cursor: pointer;
-  }
-  .side-menu ul li:hover {
-    background: #f0f0f0;
-  }
-  .side-menu ul li.indisponivel {
-    opacity: 0.5;
-    pointer-events: none;
-  }
-  
-  /* Cabeçalho Mobile */
-  .mobile-header {
-    background: var(--primary);
-    color: var(--white);
-    height: 56px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 16px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-  }
-  .mobile-header .title {
-    font-size: 20px;
-    font-weight: bold;
-    margin: 0; /* Espaçamento reduzido */
-  }
-  
-  /* Conteúdo Principal */
-  .mobile-main {
-    flex: 1;
-    overflow-y: auto;
-    padding: 16px;
-    margin-top: 56px;
-    margin-bottom: 56px;
-  }
-  .view {
-    display: none;
-  }
-  .view.active {
-    display: block;
-  }
-  
-  /* Seletor de Data */
-  .date-picker {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 8px; /* Reduzido */
-  }
-  .date-picker button {
-    background: none;
-    border: none;
-    font-size: 24px;
-    color: var(--primary);
-  }
-  #selectedDate {
-    margin: 0 16px;
-    font-size: 16px; /* Reduzido */
-    font-weight: 500;
-  }
-  
-  /* Lista de Eventos */
-  .event-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding-bottom: 16px; /* Para evitar corte do último evento */
-  }
-  .event-card {
-    background: var(--white);
-    border-left: 4px solid var(--primary);
-    padding: 12px;
-    border-radius: 4px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    cursor: pointer;
-  }
-  .event-card h4 {
-    font-size: 16px;
-    margin-bottom: 4px;
-  }
-  .event-card p {
-    font-size: 14px;
-    margin: 2px 0;
-  }
-  
-  /* Calendário Mensal */
-  .monthly-calendar {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 4px;
-    padding: 8px;
-  }
-  .monthly-calendar .day {
-    padding: 8px;
-    background: var(--white);
-    border: 1px solid #ddd;
-    text-align: center;
-    cursor: pointer;
-  }
-  .monthly-calendar .day:hover {
-    background: #f0f0f0;
-  }
-  .monthly-calendar .day.today {
-    background: var(--secondary);
-    color: var(--white);
-  }
-  
-  /* Navegação Inferior */
-  .mobile-bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 56px;
-    background: var(--white);
-    border-top: 1px solid #ddd;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    z-index: 1000;
-  }
-  .nav-button {
-    flex: 1;
-    text-align: center;
-    padding: 6px 0;
-    color: var(--primary);
-    font-size: 12px;
-    border: none;
-    background: none;
-  }
-  .nav-button.active {
-    color: var(--secondary);
-  }
-  
-  /* Modais */
-  .modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right:0;
-    bottom: 0;
-    background: rgba(0,0,0,0.5);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 16px;
-    z-index: 1002;
-  }
-  .modal.active {
-    display: flex;
-  }
-  .modal-content {
-    background: var(--white);
-    padding: 16px;
-    border-radius: 8px;
-    width: 100%;
-    max-width: 400px;
-  }
-  .modal-content h3 {
-    margin-bottom: 12px;
-    color: var(--primary);
-  }
-  .modal-content form label {
-    display: block;
-    margin-bottom: 4px;
-    font-weight: bold;
-  }
-  .modal-content form input,
-  .modal-content form select {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 12px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  .form-buttons {
-    display: flex;
-    justify-content: space-between;
-  }
-  .btn {
-    padding: 10px 16px;
-    border: none;
-    border-radius: 4px;
-    font-weight: bold;
-    cursor: pointer;
-  }
-  .btn-primary {
-    background: var(--secondary);
-    color: var(--white);
-  }
-  .btn-secondary {
-    background: #ccc;
-    color: #333;
-  }
-  .btn-danger {
-    background: var(--error);
-    color: var(--white);
-  }
-  
+  --primary: rgb(32,51,86);
+  --secondary:  #d94621;
+  --background:  #f8f9fa;
+  --text-color:  #333;
+  --white:  #fff;
+  --error:  #dc3545;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: var(--background);
+  color: var(--text-color);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Menu Lateral */
+.side-menu {
+  position: fixed;
+  top: 0;
+  left: -250px;
+  width: 250px;
+  height: 100%;
+  background: var(--white);
+  box-shadow: 2px 0 5px rgba(0,0,0,0.2);
+  transition: left 0.3s;
+  z-index: 1001;
+}
+.side-menu.active {
+  left: 0;
+}
+.side-menu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--primary);
+  color: var(--white);
+  padding: 16px;
+}
+.side-menu ul {
+  list-style: none;
+  padding: 0;
+}
+.side-menu ul li {
+  padding: 12px 16px;
+  border-bottom: 1px solid #ddd;
+  cursor: pointer;
+}
+.side-menu ul li:hover {
+  background: #f0f0f0;
+}
+.side-menu ul li.indisponivel {
+  opacity: 0.5;
+  pointer-events: none;
+}
+.side-menu ul li.active {
+  background: rgba(32, 51, 86, 0.1);
+  font-weight: bold;
+}
+
+/* Cabeçalho Mobile */
+.mobile-header {
+  background: var(--primary);
+  color: var(--white);
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+.mobile-header .title {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0;
+}
+
+/* Conteúdo Principal */
+.mobile-main {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  margin-top: 56px;
+  margin-bottom: 56px;
+}
+.view {
+  display: none;
+}
+.view.active {
+  display: block;
+}
+
+/* Seletor de Data */
+.date-picker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+.date-picker button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: var(--primary);
+}
+#selectedDate {
+  margin: 0 16px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* Exibição da Sala na Agenda */
+.room-display {
+  text-align: center;
+  margin-bottom: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--secondary);
+}
+
+/* Lista de Eventos */
+.event-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-bottom: 16px;
+}
+.event-card {
+  background: var(--white);
+  border-left: 4px solid var(--primary);
+  padding: 12px;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  cursor: pointer;
+}
+.event-card h4 {
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+.event-card p {
+  font-size: 14px;
+  margin: 2px 0;
+}
+/* Estilo para reservas do próprio usuário */
+.event-card.mine {
+  border-left-color: var(--secondary);
+  background: #f7f9ff;
+}
+
+/* Calendário Mensal */
+.monthly-calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  padding: 8px;
+}
+.monthly-calendar .day {
+  padding: 8px;
+  background: var(--white);
+  border: 1px solid #ddd;
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.monthly-calendar .day:hover {
+  background: #f2f2f2;
+}
+.monthly-calendar .day.today {
+  background: var(--secondary);
+  color: var(--white);
+}
+.monthly-calendar .day.selected {
+  background: #c03f18;
+  color: var(--white);
+}
+
+/* Resumo do dia no calendário */
+.day-summary {
+  margin-top: 16px;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+/* Container rolável para o Calendário e Resumo */
+.calendar-container {
+  overflow-y: auto;
+  padding-bottom: 70px;
+}
+
+/* Navegação Inferior */
+.mobile-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  background: var(--white);
+  border-top: 1px solid #ddd;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 1000;
+}
+.nav-button {
+  flex: 1;
+  text-align: center;
+  padding: 6px 0;
+  color: var(--primary);
+  font-size: 12px;
+  border: none;
+  background: none;
+}
+.nav-button.active {
+  color: var(--secondary);
+}
+
+/* Modais */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right:0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 1002;
+}
+.modal.active {
+  display: flex;
+}
+.modal-content {
+  background: var(--white);
+  padding: 16px;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 400px;
+}
+.modal-content h3 {
+  margin-bottom: 12px;
+  color: var(--primary);
+}
+.modal-content form label {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: bold;
+}
+.modal-content form input,
+.modal-content form select {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.form-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+.btn {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.btn-primary {
+  background: var(--secondary);
+  color: var(--white);
+}
+.btn-secondary {
+  background: #ccc;
+  color: #333;
+}
+.btn-danger {
+  background: var(--error);
+  color: var(--white);
+}
+
+/* Modal de Notificação */
+.notification-modal .modal-content {
+  background: var(--white);
+  padding: 16px;
+  border-radius: 8px;
+  max-width: 300px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}

@@ -6,17 +6,42 @@ header('Content-Type: application/json');
 try {
     switch($_SERVER['REQUEST_METHOD']) {
         case 'GET':
-            // Listar reservas com campo "title" para o FullCalendar
+            // Se o parâmetro "dia" for enviado e não for acompanhado de "sala", retorna reservas de todas as salas para o dia especificado
+            if(isset($_GET['dia']) && !isset($_GET['sala'])) {
+                $dia = $_GET['dia'];
+                $stmt = $pdo->prepare("
+                    SELECT id, titulo as title, inicio as start, fim as end, cor, usuario, empresa, sala
+                    FROM reservas
+                    WHERE DATE(inicio) = ?
+                ");
+                $stmt->execute([$dia]);
+                $reservas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                echo json_encode($reservas);
+                break;
+            }
+            // Se for enviado "sala" (com ou sem "dia")
             $sala = $_GET['sala'] ?? null;
             if(!$sala) throw new Exception("Sala não especificada");
-            $stmt = $pdo->prepare("
-                SELECT id, titulo as title, inicio as start, fim as end, cor, usuario, empresa, sala
-                FROM reservas
-                WHERE sala = ?
-            ");
-            $stmt->execute([$sala]);
-            $reservas = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            echo json_encode($reservas);
+            if(isset($_GET['dia'])) {
+                $dia = $_GET['dia'];
+                $stmt = $pdo->prepare("
+                    SELECT id, titulo as title, inicio as start, fim as end, cor, usuario, empresa, sala
+                    FROM reservas
+                    WHERE sala = ? AND DATE(inicio) = ?
+                ");
+                $stmt->execute([$sala, $dia]);
+                $reservas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                echo json_encode($reservas);
+            } else {
+                $stmt = $pdo->prepare("
+                    SELECT id, titulo as title, inicio as start, fim as end, cor, usuario, empresa, sala
+                    FROM reservas
+                    WHERE sala = ?
+                ");
+                $stmt->execute([$sala]);
+                $reservas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                echo json_encode($reservas);
+            }
             break;
         case 'POST':
             // Nova reserva
