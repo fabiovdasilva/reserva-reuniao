@@ -6,7 +6,6 @@ header('Content-Type: application/json');
 try {
     switch($_SERVER['REQUEST_METHOD']) {
         case 'GET':
-            // Se o parâmetro "dia" for enviado e não for acompanhado de "sala", retorna reservas de todas as salas para o dia especificado
             if(isset($_GET['dia']) && !isset($_GET['sala'])) {
                 $dia = $_GET['dia'];
                 $stmt = $pdo->prepare("
@@ -19,7 +18,6 @@ try {
                 echo json_encode($reservas);
                 break;
             }
-            // Se for enviado "sala" (com ou sem "dia")
             $sala = $_GET['sala'] ?? null;
             if(!$sala) throw new Exception("Sala não especificada");
             if(isset($_GET['dia'])) {
@@ -44,7 +42,6 @@ try {
             }
             break;
         case 'POST':
-            // Nova reserva
             if(empty($_POST['sala']) || !in_array($_POST['sala'], ['Sala 01', 'Sala 02', 'Sala 03'])) {
                 throw new Exception("Seleção de sala inválida");
             }
@@ -55,15 +52,12 @@ try {
                     throw new Exception("Campo '$campo' obrigatório");
                 }
             }
-            // Validação: fim deve ser posterior ao início
             if(strtotime($dados['fim']) <= strtotime($dados['inicio'])) {
                 throw new Exception("O horário de fim deve ser posterior ao horário de início");
             }
-            // Validação: não permitir agendamento para dias anteriores
             if(strtotime($dados['inicio']) < strtotime(date('Y-m-d') . " 00:00:00")) {
                 throw new Exception("Não é permitido agendar para dias anteriores");
             }
-            // Verificar conflitos de horário
             $stmt = $pdo->prepare("
                 SELECT id
                 FROM reservas
@@ -82,11 +76,9 @@ try {
             if($stmt->rowCount() > 0) {
                 throw new Exception("Conflito de horário na sala selecionada");
             }
-            // Obter cor da empresa
             $stmt = $pdo->prepare("SELECT cor FROM empresas WHERE nome = ?");
             $stmt->execute([empresaAtual()]);
             $cor = $stmt->fetchColumn();
-            // Inserir reserva
             $stmt = $pdo->prepare("
                 INSERT INTO reservas
                 (titulo, sala, inicio, fim, usuario, empresa, cor)
@@ -110,7 +102,6 @@ try {
             $stmt->execute([$id]);
             $reserva = $stmt->fetch();
             if(!$reserva) throw new Exception("Reserva não encontrada");
-            // Verificar permissão para cancelar
             if(usuarioAtual() !== $reserva['usuario'] && !isAdmin()) {
                 throw new Exception("Acesso não autorizado");
             }

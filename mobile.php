@@ -56,7 +56,7 @@ $salas = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <span id="selectedDate">Hoje</span>
         <button id="nextDay"><i class="material-icons">chevron_right</i></button>
       </div>
-      <!-- Exibe a sala em um container separado com estilo diferenciado -->
+      <!-- Exibe a sala em um container separado -->
       <div class="room-display">
          <span id="selectedRoom">Sala 01</span>
       </div>
@@ -67,7 +67,6 @@ $salas = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
     <!-- Calendário Mensal View -->
     <div id="calendarView" class="view">
-      <!-- Container rolável para evitar que o resumo fique oculto -->
       <div class="calendar-container">
          <div id="monthlyCalendar" class="monthly-calendar">
            <!-- Calendário gerado via JS -->
@@ -128,7 +127,7 @@ $salas = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
   </div>
   
-  <!-- Modal de Notificação (para avisos, ex: reserva efetuada) -->
+  <!-- Modal de Notificação -->
   <div id="notificationModal" class="modal notification-modal">
     <div class="modal-content">
       <p id="notificationMessage"></p>

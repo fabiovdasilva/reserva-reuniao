@@ -154,7 +154,6 @@ body {
   font-size: 14px;
   margin: 2px 0;
 }
-/* Estilo para reservas do próprio usuário */
 .event-card.mine {
   border-left-color: var(--secondary);
   background: #f7f9ff;
@@ -194,7 +193,7 @@ body {
   transition: opacity 0.5s;
 }
 
-/* Container rolável para o Calendário e Resumo */
+/* Container rolável para Calendário e Resumo */
 .calendar-container {
   overflow-y: auto;
   padding-bottom: 70px;

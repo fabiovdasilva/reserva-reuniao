@@ -15,6 +15,12 @@ document.addEventListener('DOMContentLoaded', () => {
   let selectedSala = 'Sala 01';
   let eventsData = [];
   
+  // Função auxiliar para comparação case-insensitive e sem espaços extras
+  function isCurrentUser(usuarioReserva) {
+    return usuarioReserva && currentUser &&
+           usuarioReserva.trim().toLowerCase() === currentUser.trim().toLowerCase();
+  }
+  
   function formatDate(date) {
     const options = { weekday: 'long', month: 'short', day: 'numeric' };
     return date.toLocaleDateString('pt-BR', options);
@@ -56,8 +62,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     toggleSideMenu();
-    loadEvents();
+    updateSelectedDate();
   }
+  
+  // Fecha o menu lateral ao clicar fora dele
+  document.addEventListener('click', function(event) {
+    const sideMenu = document.getElementById('sideMenu');
+    if(sideMenu.classList.contains('active')) {
+      if (!event.target.closest('#sideMenu') && !event.target.closest('.menu-icon')) {
+        sideMenu.classList.remove('active');
+      }
+    }
+  });
   
   // Exibir Agenda View
   window.showAgendaView = function() {
@@ -127,11 +143,10 @@ document.addEventListener('DOMContentLoaded', () => {
     filteredEvents.forEach(evento => {
       const card = document.createElement('div');
       card.className = 'event-card';
-      // Se a reserva for do usuário atual, adiciona classe "mine"
-      if (evento.usuario === currentUser) {
+      // Verifica se a reserva é do usuário atual (usando a função auxiliar)
+      if (isCurrentUser(evento.usuario)) {
         card.classList.add('mine');
       }
-      // Utiliza "evento.title" conforme retornado pela API
       card.innerHTML = `
         <h4>${evento.title || 'Sem título'}</h4>
         <p><strong>Responsável:</strong> ${evento.usuario || 'N/A'}</p>
@@ -158,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <p><strong>Sala:</strong> ${evento.sala}</p>
     `;
     // Se a reserva for do usuário atual, exibe botão para cancelar
-    if (evento.usuario === currentUser) {
+    if (isCurrentUser(evento.usuario)) {
        detailsHtml += `
        <div class="form-buttons">
           <button id="cancelReservationBtn" class="btn btn-danger" onclick="cancelReservation()" data-id="${evento.id}">Cancelar Reserva</button>
@@ -222,7 +237,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   
-  // Gera um calendário mensal simples
   function generateMonthlyCalendar() {
     monthlyCalendarEl.innerHTML = '';
     const year = currentDate.getFullYear();
@@ -238,7 +252,6 @@ document.addEventListener('DOMContentLoaded', () => {
       monthlyCalendarEl.appendChild(emptyCell);
     }
     
-    // Cria os dias do mês
     for (let d = 1; d <= lastDay.getDate(); d++) {
       const dayCell = document.createElement('div');
       dayCell.className = 'day';
@@ -255,7 +268,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   
   function showCalendarDaySummary(date) {
-    // Remove a classe "selected" dos dias e adiciona no dia clicado
     document.querySelectorAll('.monthly-calendar .day').forEach(day => {
       day.classList.remove('selected');
     });
@@ -263,14 +275,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const clickedCell = dayCells.find(cell => parseInt(cell.textContent) === date.getDate());
     if(clickedCell) clickedCell.classList.add('selected');
 
-    // Exibe o resumo com uma animação
     const daySummaryEl = document.getElementById('daySummary');
     daySummaryEl.innerHTML = '<p>Carregando reservas...</p>';
     daySummaryEl.style.opacity = 0;
     
     const dateStr = date.toISOString().split('T')[0];
     
-    // Requisição para carregar reservas de todas as salas para o dia selecionado
     fetch(`api/reservas.php?dia=${dateStr}`)
       .then(response => response.json())
       .then(data => {
@@ -282,8 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
           data.forEach(evento => {
             const card = document.createElement('div');
             card.className = 'event-card';
-            // Se a reserva pertencer ao usuário, aplica classe diferenciada
-            if (evento.usuario === currentUser) {
+            if (isCurrentUser(evento.usuario)) {
               card.classList.add('mine');
             }
             card.innerHTML = `
