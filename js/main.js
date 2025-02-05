@@ -37,6 +37,12 @@ function hideDialog() {
     document.getElementById('dialogModal').classList.remove('active');
 }
 
+// Função auxiliar para comparar usuários de forma case-insensitive
+function isCurrentUserDesktop(usuarioReserva) {
+    return usuarioReserva && USUARIO_ATUAL &&
+           usuarioReserva.trim().toLowerCase() === USUARIO_ATUAL.trim().toLowerCase();
+}
+
 // Funções globais
 window.showReservaModal = function() {
     document.getElementById('reservaForm').reset();
@@ -172,7 +178,8 @@ function carregarCalendario(sala) {
             `;
             document.getElementById('eventDetails').innerHTML = details;
             document.getElementById('eventModal').dataset.eventId = info.event.id;
-            const podeCancelar = (info.event.extendedProps.usuario === USUARIO_ATUAL) || IS_ADMIN;
+            // Comparação case-insensitive para permitir o cancelamento se o usuário for o mesmo
+            const podeCancelar = isCurrentUserDesktop(info.event.extendedProps.usuario) || IS_ADMIN;
             document.getElementById('btnCancelar').style.display = podeCancelar ? 'block' : 'none';
             showModal('eventModal');
         }
