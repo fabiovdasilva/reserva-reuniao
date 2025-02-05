@@ -8,9 +8,8 @@ try {
         case 'GET':
             if(isset($_GET['dia']) && !isset($_GET['sala'])) {
                 $dia = $_GET['dia'];
-                // Seleciona o nome para exibição (campo nome_exibicao) para que apareça nas reservas
                 $stmt = $pdo->prepare("
-                    SELECT id, titulo as title, inicio as start, fim as end, cor, nome_exibicao as usuario, empresa, sala
+                    SELECT id, titulo as title, inicio as start, fim as end, cor, usuario, nome_exibicao, empresa, sala
                     FROM reservas
                     WHERE DATE(inicio) = ?
                 ");
@@ -24,7 +23,7 @@ try {
             if(isset($_GET['dia'])) {
                 $dia = $_GET['dia'];
                 $stmt = $pdo->prepare("
-                    SELECT id, titulo as title, inicio as start, fim as end, cor, nome_exibicao as usuario, empresa, sala
+                    SELECT id, titulo as title, inicio as start, fim as end, cor, usuario, nome_exibicao, empresa, sala
                     FROM reservas
                     WHERE sala = ? AND DATE(inicio) = ?
                 ");
@@ -33,7 +32,7 @@ try {
                 echo json_encode($reservas);
             } else {
                 $stmt = $pdo->prepare("
-                    SELECT id, titulo as title, inicio as start, fim as end, cor, nome_exibicao as usuario, empresa, sala
+                    SELECT id, titulo as title, inicio as start, fim as end, cor, usuario, nome_exibicao, empresa, sala
                     FROM reservas
                     WHERE sala = ?
                 ");
@@ -80,7 +79,8 @@ try {
             $stmt = $pdo->prepare("SELECT cor FROM empresas WHERE nome = ?");
             $stmt->execute([empresaAtual()]);
             $cor = $stmt->fetchColumn();
-            // Inserção atualizada: armazena o sAMAccountName em 'usuario' e o displayName em 'nome_exibicao'
+            // INSERÇÃO: armazena o sAMAccountName em 'usuario' e o displayName do AD em 'nome_exibicao'
+            // Removemos o fallback para usuarioAtual() para garantir que o nome de exibição seja sempre o AD
             $stmt = $pdo->prepare("
                 INSERT INTO reservas
                 (titulo, sala, inicio, fim, usuario, nome_exibicao, empresa, cor)
@@ -91,8 +91,8 @@ try {
                 $dados['sala'],
                 $dados['inicio'],
                 $dados['fim'],
-                usuarioAtual(), // valor interno (sAMAccountName)
-                $_SESSION['nome_exibicao'] ?? usuarioAtual(), // valor para exibição
+                usuarioAtual(),            // sAMAccountName (valor interno)
+                $_SESSION['nome_exibicao'], // nome de exibição vindo do AD
                 empresaAtual(),
                 $cor
             ]);

@@ -9,4 +9,8 @@ function usuarioAtual() {
 function empresaAtual() {
     return $_SESSION['empresa'] ?? null;
 }
+// Nova função para retornar o nome de exibição do AD
+function nomeExibicaoAtual() {
+    return $_SESSION['nome_exibicao'] ?? null;
+}
 ?>

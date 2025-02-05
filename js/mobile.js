@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
         eventsData = JSON.parse(cachedData);
         displayEvents();
     }
-
+  
     fetch(`api/reservas.php?sala=${encodeURIComponent(selectedSala)}&dia=${dateStr}`)
       .then(response => response.json())
       .then(data => {
@@ -137,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
       .catch(err => {
         console.error(err);
         if(!cachedData){
-        eventListEl.innerHTML = '<p>Erro ao carregar eventos.</p>';
+          eventListEl.innerHTML = '<p>Erro ao carregar eventos.</p>';
         }
       });
   }
@@ -155,13 +155,13 @@ document.addEventListener('DOMContentLoaded', () => {
     filteredEvents.forEach(evento => {
       const card = document.createElement('div');
       card.className = 'event-card';
-      // Verifica se a reserva é do usuário atual (usando a função auxiliar)
+      // Verifica se a reserva é do usuário atual (comparando o sAMAccountName)
       if (isCurrentUser(evento.usuario)) {
         card.classList.add('mine');
       }
       card.innerHTML = `
         <h4>${evento.title || 'Sem título'}</h4>
-        <p><strong>Responsável:</strong> ${evento.usuario || 'N/A'}</p>
+        <p><strong>Responsável:</strong> ${evento.nome_exibicao || 'N/A'}</p>
         <p><strong>Empresa:</strong> ${evento.empresa || 'N/A'}</p>
         <p><strong>Início:</strong> ${new Date(evento.start).toLocaleString()}</p>
         <p><strong>Fim:</strong> ${new Date(evento.end).toLocaleString()}</p>
@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function openEventModal(evento) {
     let detailsHtml = `
       <p><strong>Título:</strong> ${evento.title || 'Sem título'}</p>
-      <p><strong>Responsável:</strong> ${evento.usuario || 'N/A'}</p>
+      <p><strong>Responsável:</strong> ${evento.nome_exibicao || 'N/A'}</p>
       <p><strong>Empresa:</strong> ${evento.empresa || 'N/A'}</p>
       <p><strong>Início:</strong> ${new Date(evento.start).toLocaleString()}</p>
       <p><strong>Fim:</strong> ${new Date(evento.end).toLocaleString()}</p>

@@ -119,7 +119,7 @@ function showDayPanel(dateStr) {
                         <strong>${r.title}</strong><br>
                         Início: ${new Date(r.start).toLocaleTimeString()}<br>
                         Fim: ${new Date(r.end).toLocaleTimeString()}<br>
-                        Responsável: ${r.usuario}<br>
+                        Responsável: ${r.nome_exibicao}<br>
                         Empresa: ${r.empresa}
                     </div>
                 `;
@@ -173,12 +173,12 @@ function carregarCalendario(sala) {
                 <p><strong>Início:</strong> ${start}</p>
                 <p><strong>Fim:</strong> ${end}</p>
                 <p><strong>Sala:</strong> ${info.event.extendedProps.sala}</p>
-                <p><strong>Responsável:</strong> ${info.event.extendedProps.usuario}</p>
+                <p><strong>Responsável:</strong> ${info.event.extendedProps.nome_exibicao}</p>
                 <p><strong>Empresa:</strong> ${info.event.extendedProps.empresa}</p>
             `;
             document.getElementById('eventDetails').innerHTML = details;
             document.getElementById('eventModal').dataset.eventId = info.event.id;
-            // Comparação case-insensitive para permitir o cancelamento se o usuário for o mesmo
+            // Comparação case-insensitive usando o campo 'usuario' (sAMAccountName)
             const podeCancelar = isCurrentUserDesktop(info.event.extendedProps.usuario) || IS_ADMIN;
             document.getElementById('btnCancelar').style.display = podeCancelar ? 'block' : 'none';
             showModal('eventModal');
@@ -207,45 +207,5 @@ window.cancelarReserva = async function(){
     } catch(error){
         console.error('Erro:', error);
         showDialog('Erro ao processar solicitação');
-    }
-};
-
-// Funções do Admin (mantidas semelhantes)
-window.showAdminModal = async function(){
-    try{
-        const response = await fetch('api/salas.php');
-        const salas = await response.json();
-        const lista = salas.map(sala => `
-            <div class="sala-admin">
-                ${sala.nome} -
-                <span class="status">${sala.disponivel ? 'Disponível' : 'Indisponível'}</span>
-                <button class="btn ${sala.disponivel ? 'btn-danger' : 'btn-primary'}"
-                    onclick="toggleSalaStatus('${sala.nome}', ${sala.disponivel})">
-                    ${sala.disponivel ? 'Desativar' : 'Ativar'}
-                </button>
-            </div>
-        `).join('');
-        document.getElementById('listaSalasAdmin').innerHTML = lista;
-        showModal('adminModal');
-    } catch(error){
-        console.error('Erro:', error);
-    }
-};
-window.toggleSalaStatus = async function(nome, status){
-    try{
-        const response = await fetch('api/salas.php', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                acao: 'toggle',
-                nome: nome,
-                status: !status
-            })
-        });
-        if(response.ok){
-            location.reload();
-        }
-    } catch(error){
-        console.error('Erro:', error);
     }
 };
