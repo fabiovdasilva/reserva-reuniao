@@ -95,6 +95,69 @@ document.addEventListener('DOMContentLoaded', () => {
     generateMonthlyCalendar();
   }
   
+  // --- Lógica para auto-preenchimento de horário de fim e duração ---
+  // Obtém os elementos do formulário de reserva:
+  const dataInput = document.getElementById("data");       // Campo de data (tipo "date")
+  const inicioInput = document.getElementById("inicio");   // Campo de horário de início (tipo "time")
+  const fimInput = document.getElementById("fim");         // Campo de horário de fim (tipo "time")
+  const duracaoInput = document.getElementById("duracao"); // Campo de duração (tipo "number")
+  
+  if (duracaoInput) {
+    // Define o valor padrão para 30 minutos, caso não haja valor
+    if (!duracaoInput.value) {
+      duracaoInput.value = 30;
+    }
+    // Permite alteração em passos de 15 minutos
+    duracaoInput.setAttribute("step", "15");
+  }
+  
+  // Função que atualiza o campo de fim com base na data, horário de início e duração
+  function updateFimTime() {
+    if (!dataInput || !inicioInput || !fimInput) return;
+    const dataValue = dataInput.value;      // formato "YYYY-MM-DD"
+    const inicioValue = inicioInput.value;  // formato "HH:mm"
+    if (dataValue && inicioValue) {
+      // Separa os componentes da data
+      const [year, month, day] = dataValue.split("-").map(Number);
+      // Separa as horas e minutos do horário de início
+      const [hours, minutes] = inicioValue.split(":").map(Number);
+      // Cria um objeto Date combinando a data selecionada com o horário de início
+      const inicioDate = new Date(year, month - 1, day, hours, minutes, 0, 0);
+      
+      // Obtém a duração definida (padrão 30 minutos ou o valor informado)
+      let duracao = 30;
+      if (duracaoInput) {
+        const duracaoVal = parseInt(duracaoInput.value, 10);
+        if (!isNaN(duracaoVal)) {
+          duracao = duracaoVal;
+        }
+      }
+      // Calcula o horário de fim somando a duração em minutos
+      const fimDate = new Date(inicioDate.getTime() + duracao * 60000);
+      // Formata o horário de fim para "HH:mm"
+      const fimHours = fimDate.getHours().toString().padStart(2, "0");
+      const fimMinutes = fimDate.getMinutes().toString().padStart(2, "0");
+      fimInput.value = `${fimHours}:${fimMinutes}`;
+    }
+  }
+  
+  // Atualiza automaticamente o horário de fim sempre que a data, o início ou a duração forem alterados:
+  if (dataInput) {
+    dataInput.addEventListener("change", updateFimTime);
+  }
+  if (inicioInput) {
+    // Utiliza "input" para atualizar imediatamente durante a digitação/seleção
+    inicioInput.addEventListener("input", updateFimTime);
+  }
+  if (duracaoInput) {
+    duracaoInput.addEventListener("input", () => {
+      if (inicioInput.value && dataInput.value) {
+        updateFimTime();
+      }
+    });
+  }
+  // --- Fim da lógica de auto-preenchimento ---
+  
   // Retorna para hoje e exibe Agenda
   window.goToToday = function() {
     currentDate = new Date();
@@ -104,8 +167,19 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Abre e fecha modal de nova reserva
   window.openReservationModal = function() {
+    // Define a data padrão para hoje (formato YYYY-MM-DD)
+    const today = new Date().toISOString().split('T')[0];
+    if (dataInput) {
+      dataInput.value = today;
+    }
+    // Opcional: reseta os campos do formulário para evitar dados antigos
+    reservationForm.reset();
+    // Após reset, se houver valores para "início" e "duração", atualiza o "fim"
+    updateFimTime();
+    
     reservationModal.classList.add('active');
   }
+  
   window.closeReservationModal = function() {
     reservationModal.classList.remove('active');
   }
@@ -122,9 +196,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const cachedData = localStorage.getItem(cacheKey);
     
     if(cachedData) {
-        // Utiliza os dados do cache
-        eventsData = JSON.parse(cachedData);
-        displayEvents();
+      // Utiliza os dados do cache
+      eventsData = JSON.parse(cachedData);
+      displayEvents();
     }
   
     fetch(`api/reservas.php?sala=${encodeURIComponent(selectedSala)}&dia=${dateStr}`)
@@ -286,7 +360,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const dayCells = Array.from(document.querySelectorAll('.monthly-calendar .day'));
     const clickedCell = dayCells.find(cell => parseInt(cell.textContent) === date.getDate());
     if(clickedCell) clickedCell.classList.add('selected');
-
+  
     const daySummaryEl = document.getElementById('daySummary');
     daySummaryEl.innerHTML = '<p>Carregando reservas...</p>';
     daySummaryEl.style.opacity = 0;

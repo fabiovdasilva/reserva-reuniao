@@ -1,4 +1,7 @@
 <?php
+// Define o fuso horário para Brasília
+date_default_timezone_set('America/Sao_Paulo');
+
 include '../includes/auth.php';
 include '../includes/db.php';
 header('Content-Type: application/json');
@@ -42,7 +45,7 @@ try {
             }
             break;
         case 'POST':
-            if(empty($_POST['sala']) || !in_array($_POST['sala'], ['Sala 01', 'Sala 02', 'Sala 03'])) {
+            if(empty($_POST['sala']) || !in_array($_POST['sala'], ['Sala 01', 'Sala 02', 'Sala 03', 'Sala 04'])) {
                 throw new Exception("Seleção de sala inválida");
             }
             $dados = $_POST;
@@ -52,11 +55,35 @@ try {
                     throw new Exception("Campo '$campo' obrigatório");
                 }
             }
-            if(strtotime($dados['fim']) <= strtotime($dados['inicio'])) {
+            // Se os campos de horário não contiverem data, tenta combiná-los com o campo "data"
+            if(strpos($dados['inicio'], ' ') === false && !empty($_POST['data'])) {
+                $dados['inicio'] = $_POST['data'] . ' ' . $dados['inicio'] . ':00';
+            }
+            if(strpos($dados['fim'], ' ') === false && !empty($_POST['data'])) {
+                $dados['fim'] = $_POST['data'] . ' ' . $dados['fim'] . ':00';
+            }
+            // Validação dos formatos de data/hora – espera-se "Y-m-d H:i:s"
+            $inicio_dt = DateTime::createFromFormat('Y-m-d H:i:s', $dados['inicio']);
+            $fim_dt = DateTime::createFromFormat('Y-m-d H:i:s', $dados['fim']);
+            if(!$inicio_dt) {
+                throw new Exception("Formato de início inválido: " . $dados['inicio']);
+            }
+            if(!$fim_dt) {
+                throw new Exception("Formato de fim inválido: " . $dados['fim']);
+            }
+            if($fim_dt <= $inicio_dt) {
                 throw new Exception("O horário de fim deve ser posterior ao horário de início");
             }
-            if(strtotime($dados['inicio']) < strtotime(date('Y-m-d') . " 00:00:00")) {
-                throw new Exception("Não é permitido agendar para dias anteriores");
+            // Validação para agendamento em dias anteriores ou para horários já passados
+            $now = new DateTime();
+            // Define uma tolerância em minutos para reservas muito próximas do horário atual
+            $tolerance = 2; // minutos
+            if ($inicio_dt < (clone $now)->modify("+{$tolerance} minutes")) {
+                if ($inicio_dt->format('Y-m-d') < $now->format('Y-m-d')) {
+                    throw new Exception("Não é permitido agendar para dias anteriores");
+                } else {
+                    throw new Exception("O horário de início deve ser, no mínimo, {$tolerance} minutos no futuro");
+                }
             }
             $stmt = $pdo->prepare("
                 SELECT id
@@ -79,8 +106,7 @@ try {
             $stmt = $pdo->prepare("SELECT cor FROM empresas WHERE nome = ?");
             $stmt->execute([empresaAtual()]);
             $cor = $stmt->fetchColumn();
-            // INSERÇÃO: armazena o sAMAccountName em 'usuario' e o displayName do AD em 'nome_exibicao'
-            // Removemos o fallback para usuarioAtual() para garantir que o nome de exibição seja sempre o AD
+            // INSERÇÃO: armazena o sAMAccountName (usuarioAtual) e o displayName do AD (na sessão)
             $stmt = $pdo->prepare("
                 INSERT INTO reservas
                 (titulo, sala, inicio, fim, usuario, nome_exibicao, empresa, cor)
@@ -91,8 +117,8 @@ try {
                 $dados['sala'],
                 $dados['inicio'],
                 $dados['fim'],
-                usuarioAtual(),            // sAMAccountName (valor interno)
-                $_SESSION['nome_exibicao'], // nome de exibição vindo do AD
+                usuarioAtual(),
+                $_SESSION['nome_exibicao'],
                 empresaAtual(),
                 $cor
             ]);
@@ -101,12 +127,10 @@ try {
         case 'DELETE':
             $id = $_GET['id'] ?? null;
             if(!$id) throw new Exception("ID não especificado");
-            // Busca o sAMAccountName para comparação (campo 'usuario')
             $stmt = $pdo->prepare("SELECT usuario FROM reservas WHERE id = ?");
             $stmt->execute([$id]);
             $reserva = $stmt->fetch();
             if(!$reserva) throw new Exception("Reserva não encontrada");
-            // Comparação case-insensitive para verificar se o usuário atual é o dono da reserva
             if(strtolower(trim(usuarioAtual())) !== strtolower(trim($reserva['usuario'])) && !isAdmin()){
                 throw new Exception("Acesso não autorizado");
             }

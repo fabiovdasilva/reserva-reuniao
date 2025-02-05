@@ -108,14 +108,24 @@ $salas = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </option>
           <?php endforeach; ?>
         </select>
-        <label>Início:</label>
-        <input type="datetime-local" name="inicio" required>
-        <label>Fim:</label>
-        <input type="datetime-local" name="fim" required>
-        <div class="form-buttons">
-          <button type="submit" class="btn btn-primary">Salvar</button>
-          <button type="button" class="btn btn-secondary" onclick="closeReservationModal()">Cancelar</button>
+        <div class="form-group">
+          <label for="data">Data:</label>
+          <input type="date" id="data" name="data" required>
         </div>
+        <div class="form-group">
+          <label for="inicio">Início:</label>
+          <input type="time" id="inicio" name="inicio" required>
+        </div>         
+        <div class="form-group">
+          <label for="fim">Fim:</label>
+          <input type="time" id="fim" name="fim" required>
+        </div>
+        <div class="form-group">
+          <label for="duracao">Duração (minutos):</label>
+          <input type="number" id="duracao" name="duracao" value="30" step="15" min="15">
+        </div>
+        <button type="submit" class="btn btn-primary">Salvar</button>
+        <button type="button" class="btn btn-secondary" onclick="closeReservationModal()">Cancelar</button>
       </form>
     </div>
   </div>
