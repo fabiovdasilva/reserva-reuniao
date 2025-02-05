@@ -118,15 +118,27 @@ document.addEventListener('DOMContentLoaded', () => {
   function loadEvents() {
     // Carrega eventos para a sala selecionada e data atual (Agenda)
     const dateStr = currentDate.toISOString().split('T')[0];
+    const cacheKey = `events_${selectedSala}_${dateStr}`;
+    const cachedData = localStorage.getItem(cacheKey);
+    
+    if(cachedData) {
+        // Utiliza os dados do cache
+        eventsData = JSON.parse(cachedData);
+        displayEvents();
+    }
+
     fetch(`api/reservas.php?sala=${encodeURIComponent(selectedSala)}&dia=${dateStr}`)
       .then(response => response.json())
       .then(data => {
         eventsData = data;
         displayEvents();
+        localStorage.setItem(cacheKey, JSON.stringify(data));
       })
       .catch(err => {
         console.error(err);
+        if(!cachedData){
         eventListEl.innerHTML = '<p>Erro ao carregar eventos.</p>';
+        }
       });
   }
   
