@@ -1,6 +1,12 @@
 <?php
 include 'includes/auth.php';
 include 'includes/db.php';
+
+if (preg_match('/(android|iphone|ipad|mobile)/i', $_SERVER['HTTP_USER_AGENT'])) {
+    header("Location: mobile.php");
+    exit;
+}
+
 if(!usuarioAtual()){
     header("Location: login.php");
     exit();
