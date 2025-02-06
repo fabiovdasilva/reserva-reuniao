@@ -30,7 +30,7 @@ try {
     <link href="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.8/main.min.css" rel="stylesheet" />
     <!-- Arquivo de estilos personalizado (incluso após o Bootstrap) -->
     <link rel="stylesheet" href="css/estilos.css">
-    <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
 </head>
 <body>
     <div class="header">
