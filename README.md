@@ -52,11 +52,4 @@ FullCalendar
 LDAP
 HTML5/CSS3
 
-📚 Estrutura de Arquivos
-proelt-reservas/
-├── api/           # Endpoints REST
-├── assets/        # CSS/JS/Imagens
-├── includes/      # Classes core
-├── database/      # Esquema SQL
-├── docs/          # Documentação
-└── index.php      # Entrada principal
+
