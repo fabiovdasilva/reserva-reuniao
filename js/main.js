@@ -43,7 +43,7 @@ function isCurrentUserDesktop(usuarioReserva) {
            usuarioReserva.trim().toLowerCase() === USUARIO_ATUAL.trim().toLowerCase();
 }
 
-// Funções globais
+// Funções globais para modais e reserva
 window.showReservaModal = function() {
     document.getElementById('reservaForm').reset();
     document.getElementById('roomSelect').value = salaSelecionada;
@@ -94,36 +94,26 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     // --- Lógica para auto-preenchimento de horário de fim e duração ---
-    // Obtém os elementos do formulário de reserva:
     const dataInput = document.getElementById("data");       // Campo de data (tipo "date")
     const inicioInput = document.getElementById("inicio");   // Campo de horário de início (tipo "time")
     const fimInput = document.getElementById("fim");         // Campo de horário de fim (tipo "time")
     const duracaoInput = document.getElementById("duracao"); // Campo de duração (tipo "number")
 
     if (duracaoInput) {
-        // Define o valor padrão para 30 minutos, caso não haja valor
         if (!duracaoInput.value) {
             duracaoInput.value = 30;
         }
-        // Permite alteração em passos de 15 minutos
         duracaoInput.setAttribute("step", "15");
     }
 
-    // Função que atualiza o campo de fim com base na data, horário de início e duração
     function updateFimTime() {
         if (!dataInput || !inicioInput || !fimInput) return;
-        const dataValue = dataInput.value;      // formato "YYYY-MM-DD"
-        const inicioValue = inicioInput.value;  // formato "HH:mm"
+        const dataValue = dataInput.value;
+        const inicioValue = inicioInput.value;
         if (dataValue && inicioValue) {
-            // Separa os componentes da data
             const [year, month, day] = dataValue.split("-").map(Number);
-            // Separa as horas e minutos do horário de início
             const [hours, minutes] = inicioValue.split(":").map(Number);
-            // Cria um objeto Date combinando a data selecionada com o horário de início
-            // Lembre que o mês é 0-indexado no JavaScript (por isso month-1)
             const inicioDate = new Date(year, month - 1, day, hours, minutes, 0, 0);
-            
-            // Obtém a duração definida (padrão 30 minutos ou o valor informado)
             let duracao = 30;
             if (duracaoInput) {
                 const duracaoVal = parseInt(duracaoInput.value, 10);
@@ -131,21 +121,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     duracao = duracaoVal;
                 }
             }
-            // Calcula o horário de fim somando a duração em minutos
             const fimDate = new Date(inicioDate.getTime() + duracao * 60000);
-            // Formata o horário de fim para "HH:mm"
             const fimHours = fimDate.getHours().toString().padStart(2, "0");
             const fimMinutes = fimDate.getMinutes().toString().padStart(2, "0");
             fimInput.value = `${fimHours}:${fimMinutes}`;
         }
     }
 
-    // Atualiza automaticamente o horário de fim sempre que a data, o início ou a duração forem alterados:
     if (dataInput) {
         dataInput.addEventListener("change", updateFimTime);
     }
     if (inicioInput) {
-        // Utiliza "input" para atualizar imediatamente durante a digitação/seleção
         inicioInput.addEventListener("input", updateFimTime);
     }
     if (duracaoInput) {
@@ -158,6 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Fim da lógica de auto-preenchimento ---
 });
 
+
 // Exibe o painel direito com reservas do dia com animação de transição
 function showDayPanel(dateStr) {
     const rightPanel = document.getElementById('rightPanel');
@@ -166,7 +153,6 @@ function showDayPanel(dateStr) {
     rightPanel.classList.add('active');
     rightPanel.classList.add('animate__animated', 'animate__fadeInRight');
     
-    // Buscar reservas para o dia
     fetch(`api/reservas.php?sala=${encodeURIComponent(salaSelecionada)}`)
         .then(response => response.json())
         .then(reservas => {
@@ -209,6 +195,48 @@ function atualizarSelecaoSala() {
     });
 }
 
+// Função para exibir o modal de administração de salas
+window.showAdminModal = async function(){
+    try {
+        const response = await fetch('api/salas.php');
+        const salas = await response.json();
+        const lista = salas.map(sala => `
+            <div class="sala-admin">
+                ${sala.nome} - 
+                <span class="status">${sala.disponivel ? 'Disponível' : 'Indisponível'}</span>
+                <button class="btn ${sala.disponivel ? 'btn-danger' : 'btn-primary'}"
+                    onclick="toggleSalaStatus('${sala.nome}', ${sala.disponivel})">
+                    ${sala.disponivel ? 'Desativar' : 'Ativar'}
+                </button>
+            </div>
+        `).join('');
+        document.getElementById('listaSalasAdmin').innerHTML = lista;
+        showModal('adminModal');
+    } catch(error) {
+        console.error('Erro:', error);
+    }
+};
+
+// Função para alternar o status da sala (disponível/indisponível)
+window.toggleSalaStatus = async function(nome, status) {
+    try {
+        const response = await fetch('api/salas.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                acao: 'toggle',
+                nome: nome,
+                status: !status
+            })
+        });
+        if(response.ok){
+            location.reload();
+        }
+    } catch(error) {
+        console.error('Erro:', error);
+    }
+};
+
 // Carrega o calendário e configura o dateClick para exibir o painel direito
 function carregarCalendario(sala) {
     salaSelecionada = sala;
@@ -230,8 +258,8 @@ function carregarCalendario(sala) {
             info.el.style.padding = '2px 5px';
         },
         eventClick: function(info){
-            const start = info.event.start?.toLocaleString() || 'Não definido';
-            const end = info.event.end?.toLocaleString() || 'Não definido';
+            const start = info.event.start ? info.event.start.toLocaleString() : 'Não definido';
+            const end = info.event.end ? info.event.end.toLocaleString() : 'Não definido';
             const details = `
                 <p><strong>Título:</strong> ${info.event.title}</p>
                 <p><strong>Início:</strong> ${start}</p>
@@ -242,7 +270,6 @@ function carregarCalendario(sala) {
             `;
             document.getElementById('eventDetails').innerHTML = details;
             document.getElementById('eventModal').dataset.eventId = info.event.id;
-            // Comparação case-insensitive usando o campo 'usuario' (sAMAccountName)
             const podeCancelar = isCurrentUserDesktop(info.event.extendedProps.usuario) || IS_ADMIN;
             document.getElementById('btnCancelar').style.display = podeCancelar ? 'block' : 'none';
             showModal('eventModal');
@@ -273,3 +300,78 @@ window.cancelarReserva = async function(){
         showDialog('Erro ao processar solicitação');
     }
 };
+
+function showNotification(message) {
+    const notifModal = document.getElementById('notificationModal');
+    const notifMessage = document.getElementById('notificationMessage');
+    notifMessage.textContent = message;
+    notifModal.classList.add('active');
+    setTimeout(() => {
+        notifModal.classList.remove('active');
+    }, 3000);
+}
+
+function updateSelectedDate() {
+    const selectedDateEl = document.getElementById('selectedDate');
+    selectedDateEl.textContent = new Date().toLocaleDateString('pt-BR');
+    loadEvents();
+}
+
+function loadEvents() {
+    const eventListEl = document.getElementById('eventList');
+    const currentDate = new Date();
+    const dateStr = currentDate.toISOString().split('T')[0];
+    const cacheKey = `events_${salaSelecionada}_${dateStr}`;
+    const cachedData = localStorage.getItem(cacheKey);
+    if(cachedData) {
+        eventsData = JSON.parse(cachedData);
+        displayEvents();
+    }
+    fetch(`api/reservas.php?sala=${encodeURIComponent(salaSelecionada)}&dia=${dateStr}`)
+      .then(response => response.json())
+      .then(data => {
+          eventsData = data;
+          displayEvents();
+          localStorage.setItem(cacheKey, JSON.stringify(data));
+      })
+      .catch(err => {
+          console.error(err);
+          if(!cachedData){
+              eventListEl.innerHTML = '<p>Erro ao carregar eventos.</p>';
+          }
+      });
+}
+
+function displayEvents() {
+    const eventListEl = document.getElementById('eventList');
+    eventListEl.innerHTML = '';
+    const currentDate = new Date();
+    const dateStr = currentDate.toISOString().split('T')[0];
+    let filteredEvents = eventsData.filter(evento => evento.start.startsWith(dateStr));
+    if (filteredEvents.length === 0) {
+        eventListEl.innerHTML = '<p>Nenhuma reserva encontrada.</p>';
+        return;
+    }
+    filteredEvents.sort((a, b) => new Date(a.start) - new Date(b.start));
+    filteredEvents.forEach(evento => {
+        const card = document.createElement('div');
+        card.className = 'event-card';
+        if (isCurrentUserDesktop(evento.usuario)) {
+            card.classList.add('mine');
+        }
+        card.innerHTML = `
+            <h4>${evento.title || 'Sem título'}</h4>
+            <p><strong>Responsável:</strong> ${evento.nome_exibicao || 'N/A'}</p>
+            <p><strong>Empresa:</strong> ${evento.empresa || 'N/A'}</p>
+            <p><strong>Início:</strong> ${new Date(evento.start).toLocaleString()}</p>
+            <p><strong>Fim:</strong> ${new Date(evento.end).toLocaleString()}</p>
+            <p><strong>Sala:</strong> ${evento.sala}</p>
+        `;
+        card.addEventListener('click', () => {
+            openEventModal(evento);
+        });
+        eventListEl.appendChild(card);
+    });
+}
+
+updateSelectedDate();
