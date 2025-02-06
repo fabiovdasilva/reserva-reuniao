@@ -206,7 +206,7 @@ body {
     margin-bottom: 1.5rem !important;
     color: var(--primary) !important;
     font-size: 1.4rem !important;
-    border-bottom: 2px solid var(--secondary) !important;
+    border-bottom: 2px solid var(--primary) !important;
     padding-bottom: 0.5rem !important;
 }
 .form-group {
