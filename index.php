@@ -34,7 +34,7 @@ try {
 </head>
 <body>
     <div class="header">
-        <div class="logo">PROELT</div>
+        <div class="logo"><img src="images/Logo principal-branco.png" alt="Logo Proelt"></div>
         <div class="user-info">
             <!-- Exibe o nome para exibição do AD se estiver definido, senão exibe o nome de usuário -->
             <span><?= htmlspecialchars($_SESSION['nome_exibicao'] ?? usuarioAtual()) ?></span>

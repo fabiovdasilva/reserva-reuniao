@@ -55,6 +55,11 @@ body {
     font-weight: 700 !important;
     letter-spacing: 1px !important;
 }
+
+.logo img {
+    width: 150px;
+    height: auto;
+}
 .user-info {
     display: flex !important;
     gap: 20px !important;

@@ -56,7 +56,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
     <div class="modal active">
-        <h3>Login PROELT</h3>
+        <h3><div class="logo"><img src="images/logo principal transparente 300x60.png" alt="Logo Proelt"></div></h3>
         <form method="POST">
             <div class="form-group">
                 <label>Usuário AD:</label>

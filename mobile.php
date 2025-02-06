@@ -22,7 +22,6 @@ $salas = $stmt->fetchAll(PDO::FETCH_ASSOC);
   <link rel="stylesheet" href="css/mobile.css">
   <!-- Ícones do Material Design -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
 </head>
 <body>
   <!-- Menu Lateral de Salas -->
@@ -44,7 +43,7 @@ $salas = $stmt->fetchAll(PDO::FETCH_ASSOC);
   <!-- Cabeçalho Mobile -->
   <header class="mobile-header">
     <div class="menu-icon" onclick="toggleSideMenu()"><i class="material-icons">menu</i></div>
-    <div class="title">PROELT</div>
+    <div class="title"><img src="images/Logo principal-branco.png" alt="Logo Proelt" style="width: 150px; height: auto;"></div>
     <div class="add-icon" onclick="openReservationModal()"><i class="material-icons">add</i></div>
   </header>
   
