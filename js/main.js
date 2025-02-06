@@ -256,6 +256,25 @@ function carregarCalendario(sala) {
             info.el.style.borderRadius = '4px';
             info.el.style.color = '#fff';
             info.el.style.padding = '2px 5px';
+
+            // Lógica para colorir o fc-daygrid-event-dot:
+            let now = new Date();
+            let eventStart = info.event.start;
+            // Se não houver um end definido, consideramos apenas o start
+            let eventEnd = info.event.end || eventStart;
+            // Tenta localizar o elemento do dot
+            let dot = info.el.querySelector('.fc-daygrid-event-dot');
+            if (dot) {
+                // Remove classes previamente adicionadas (se houver)
+                dot.classList.remove('future', 'ongoing', 'past');
+                if (now < eventStart) {
+                    dot.classList.add('future');
+                } else if (now >= eventStart && now <= eventEnd) {
+                    dot.classList.add('ongoing');
+                } else {
+                    dot.classList.add('past');
+                }
+            }
         },
         eventClick: function(info){
             const start = info.event.start ? info.event.start.toLocaleString() : 'Não definido';

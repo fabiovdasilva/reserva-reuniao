@@ -294,3 +294,22 @@ input:focus, select:focus {
         padding: 0.8rem 1.4rem !important;
     }
 }
+
+
+.fc-daygrid-event-dot.future {
+    background-color: green !important;
+    border: calc(var(--fc-daygrid-event-dot-width) / 2) solid green;
+
+}
+
+.fc-daygrid-event-dot.ongoing {
+    background-color: yellow !important;
+    border: calc(var(--fc-daygrid-event-dot-width) / 2) solid yellow;
+
+}
+
+.fc-daygrid-event-dot.past {
+    background-color: red !important;
+    border: calc(var(--fc-daygrid-event-dot-width) / 2) solid #fd0000;
+
+}
