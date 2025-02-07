@@ -53,6 +53,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <title>Login - PROELT</title>
     <link rel="stylesheet" href="css/estilos.css">
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
 </head>
 <body>
     <div class="modal active">
