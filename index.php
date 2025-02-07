@@ -2,6 +2,16 @@
 include 'includes/auth.php';
 include 'includes/db.php';
 
+// Exemplo de mapeamento das salas para suas capacidades
+$capacidadeSalas = [
+    'Sala 01' => 30,
+    'Sala 02' => 8,
+    'Sala 03' => 6,
+    'Sala 04' => 6
+];
+
+
+
 if (preg_match('/(android|iphone|ipad|mobile)/i', $_SERVER['HTTP_USER_AGENT'])) {
     header("Location: mobile.php");
     exit;
@@ -48,7 +58,11 @@ try {
     </div>
     <div class="sidebar">
         <?php foreach($salas as $sala): ?>
-            <div class="sala-item <?= $sala['disponivel'] ? '' : 'indisponivel' ?>" data-sala="<?= htmlspecialchars($sala['nome']) ?>" onclick="carregarCalendario('<?= htmlspecialchars($sala['nome']) ?>')">
+            <?php 
+                // Busca a capacidade definida no array; se não existir, usa um valor padrão ou uma mensagem
+                $capacidade = isset($capacidadeSalas[$sala['nome']]) ? $capacidadeSalas[$sala['nome']] : 'Desconhecida';
+            ?>
+            <div class="sala-item <?= $sala['disponivel'] ? '' : 'indisponivel' ?>" data-sala="<?= htmlspecialchars($sala['nome']) ?>" title="Capacidade máxima: <?= htmlspecialchars($capacidade) ?> pessoas" onclick="carregarCalendario('<?= htmlspecialchars($sala['nome']) ?>')">
                 <?= htmlspecialchars($sala['nome']) ?>
                 <?= !$sala['disponivel'] ? ' (Indisponível)' : '' ?>
             </div>
