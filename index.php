@@ -53,6 +53,26 @@ try {
                 <?= !$sala['disponivel'] ? ' (Indisponível)' : '' ?>
             </div>
         <?php endforeach; ?>
+        <div class="legenda">
+            <h4>Legenda:</h4>
+            <div class="legenda-section">
+                <strong>Disponibilidade:</strong>
+                <ul class="legenda-list">
+                    <li><span class="dot dot-vermelha"></span> Reunião encerrada</li>
+                    <li><span class="dot dot-amarela"></span> Reunião em andamento</li>
+                    <li><span class="dot dot-verde"></span> Reunião em aberto</li>
+                </ul>
+            </div>
+            <div class="legenda-section">
+                <strong>Empresas:</strong>
+                <ul class="legenda-list">
+                    <li><span class="quadrado" style="background-color: #EF5350;"></span> Instalações</li>
+                    <li><span class="quadrado" style="background-color: #42A5F5;"></span> Painéis</li>
+                    <li><span class="quadrado" style="background-color: #FFA726;"></span> Subestação</li>
+                    <li><span class="quadrado" style="background-color: #AB47BC;"></span> 5S</li>
+                </ul>
+            </div>
+        </div>
     </div>
     <div class="main-content">
         <div class="calendar-container">
