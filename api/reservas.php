@@ -45,6 +45,7 @@ try {
             }
             break;
         case 'POST':
+            //Em caso de aumento de sala, criar no banco de dados mais uma sala e adicionar aqui.
             if(empty($_POST['sala']) || !in_array($_POST['sala'], ['Sala 01', 'Sala 02', 'Sala 03', 'Sala 04'])) {
                 throw new Exception("Seleção de sala inválida");
             }

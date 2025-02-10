@@ -2,7 +2,7 @@
 include 'includes/auth.php';
 include 'includes/db.php';
 
-// Exemplo de mapeamento das salas para suas capacidades
+// Mapeamento das salas para suas capacidades
 $capacidadeSalas = [
     'Sala 01' => 30,
     'Sala 02' => 8,
