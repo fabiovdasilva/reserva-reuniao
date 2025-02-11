@@ -4,7 +4,7 @@ include 'includes/db.php';
 
 // Mapeamento das salas para suas capacidades
 $capacidadeSalas = [
-    'Sala 01' => 30,
+    'Sala 01' => 15,
     'Sala 02' => 8,
     'Sala 03' => 6,
     'Sala 04' => 6
@@ -171,6 +171,7 @@ try {
         // A variável USUARIO_ATUAL continua sendo o nome de usuário para fins de comparação em reservas, etc.
         const USUARIO_ATUAL = '<?= htmlspecialchars(usuarioAtual()) ?>';
         const IS_ADMIN = <?= isAdmin() ? 'true' : 'false' ?>;
+        document.querySelector('.fc-today-button').textContent = 'Hoje';
     </script>
     <script src="js/main.js"></script>
 </body>

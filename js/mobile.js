@@ -14,6 +14,10 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentDate = new Date();
   let selectedSala = 'Sala 01';
   let eventsData = [];
+
+
+  document.querySelector('.fc-today-button').textContent = 'Hoje';
+
   
   // Função auxiliar para comparação case-insensitive e sem espaços extras
   function isCurrentUser(usuarioReserva) {
